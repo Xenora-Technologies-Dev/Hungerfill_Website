@@ -50,6 +50,7 @@ function head({ title, description, keywords, path, image, base = "" }) {
     "@type": "Organization",
     name: c.name,
     legalName: c.legal,
+    alternateName: ["Hunger Fill Foodstuff Trading", "Hunger Fill Foodstuff Trading LLC", "Hunger fill foodstuff trading llc", "HUNGER FILL FOODSTUFF TRADING LLC"],
     url: c.domain,
     logo: `${c.domain}/assets/logo.svg`,
     email: c.email,

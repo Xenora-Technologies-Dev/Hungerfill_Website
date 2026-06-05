@@ -130,6 +130,7 @@
             </a>
           </div>
         </div>
+        <p class="footer-credits">Designed and Developed by <strong>XENORA</strong></p>
       </div>
     </footer>`;
 
@@ -156,6 +157,7 @@
 
   document.querySelectorAll(".nav-dropdown-toggle").forEach(toggle => {
     toggle.addEventListener("click", (e) => {
+      e.preventDefault();
       e.stopPropagation();
       const parent = toggle.closest(".nav-dropdown");
       const isOpen = parent.classList.contains("open");
