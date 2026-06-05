@@ -1,0 +1,13 @@
+# Hungerfill Foods — LLM context file
+# https://hungerfill.com/llm.txt
+# See also: https://hungerfill.com/llms.txt
+
+Hunger Fill Foodstuff Trading LLC operates as Hungerfill Foods from Dubai, UAE.
+Website: https://hungerfill.com
+Contact: info@hungerfill.com | sales@hungerfill.com | +971 50 5056049
+
+Products: frozen seafood, poultry, meat, eggs, dates, ghee, vegetables, grains, fruits, cheese, dairy.
+Markets served: Dubai, UAE and GCC — hotels, restaurants, supermarkets, caterers, distributors.
+
+Full LLM documentation: https://hungerfill.com/llms.txt
+Sitemap: https://hungerfill.com/sitemap.xml

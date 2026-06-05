@@ -35,28 +35,22 @@
         { label: "Others", icon: "🌾", path: "products/other.html" }
       ];
 
-  const navItems = [
-    { href: "index.html", label: "Home" },
-    { href: "about.html", label: "About" },
-    { href: "blog/index.html", label: "Blog" },
-    { href: "contact.html", label: "Contact" }
-  ];
-
   const pathname = window.location.pathname;
   const currentPath = pathname.split("/").pop() || "index.html";
 
-  function isNavActive(href) {
-    const segment = href.split("/").pop();
-    if (href.includes("blog/") && pathname.includes("/blog")) return " active";
-    return currentPath === segment ? " active" : "";
+  function isActive(href) {
+    const seg = href.split("/").pop();
+    if (href.includes("products/") && pathname.includes("/products")) return true;
+    if (href.includes("blog/") && pathname.includes("/blog")) return true;
+    return currentPath === seg || (href === "index.html" && (currentPath === "" || currentPath === "index.html"));
   }
 
-  function isProductsActive() {
-    return pathname.includes("/products") ? " active" : "";
-  }
-
-  const dropdownHTML = dropdown.map(item =>
+  const productLinksDesktop = dropdown.map(item =>
     `<li><a href="${rel(item.path)}" class="nav-dropdown-link"><span class="nav-dropdown-icon">${item.icon}</span>${item.label}</a></li>`
+  ).join("");
+
+  const productLinksMobile = dropdown.map(item =>
+    `<a href="${rel(item.path)}" class="drawer-sublink"><span class="drawer-sublink-icon">${item.icon}</span>${item.label}</a>`
   ).join("");
 
   const navHTML = `
@@ -66,25 +60,46 @@
           <img src="${rel("assets/logo.svg")}" alt="${c.name} logo" width="64" height="64" />
           <span>${c.name}</span>
         </a>
-        <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation">
-          <span></span><span></span><span></span>
-        </button>
-        <ul class="nav-links" id="navLinks">
-          <li><a href="${rel("index.html")}" class="${currentPath === "index.html" || currentPath === "" ? "active" : ""}">Home</a></li>
-          <li><a href="${rel("about.html")}" class="${currentPath === "about.html" ? "active" : ""}">About</a></li>
-          <li class="nav-dropdown${isProductsActive()}">
-            <button type="button" class="nav-dropdown-toggle${isProductsActive()}" aria-expanded="false" aria-haspopup="true">
+        <ul class="nav-links nav-links--desktop">
+          <li><a href="${rel("index.html")}" class="${isActive("index.html") ? "active" : ""}">Home</a></li>
+          <li><a href="${rel("about.html")}" class="${isActive("about.html") ? "active" : ""}">About</a></li>
+          <li class="nav-dropdown${isActive("products/seafood.html") ? " active" : ""}">
+            <button type="button" class="nav-dropdown-toggle${pathname.includes("/products") ? " active" : ""}" aria-expanded="false" aria-haspopup="true">
               Products <span class="dropdown-arrow" aria-hidden="true">▾</span>
             </button>
-            <ul class="nav-dropdown-menu">
-              ${dropdownHTML}
-            </ul>
+            <ul class="nav-dropdown-menu">${productLinksDesktop}</ul>
           </li>
-          <li><a href="${rel("blog/index.html")}" class="${isNavActive("blog/index.html")}">Blog</a></li>
-          <li><a href="${rel("contact.html")}" class="${currentPath === "contact.html" ? "active" : ""}">Contact</a></li>
+          <li><a href="${rel("blog/index.html")}" class="${isActive("blog/index.html") ? "active" : ""}">Blog</a></li>
+          <li><a href="${rel("contact.html")}" class="${isActive("contact.html") ? "active" : ""}">Contact</a></li>
           <li><a href="${rel("contact.html")}" class="nav-cta">Get a Quote</a></li>
         </ul>
+        <button class="nav-toggle" id="navToggle" aria-label="Open menu" aria-expanded="false" aria-controls="navDrawer">
+          <span></span><span></span><span></span>
+        </button>
       </div>
+      <div class="nav-backdrop" id="navBackdrop" aria-hidden="true"></div>
+      <aside class="nav-drawer" id="navDrawer" aria-hidden="true" aria-label="Site navigation">
+        <div class="nav-drawer-header">
+          <span class="nav-drawer-title">Menu</span>
+          <button type="button" class="nav-drawer-close" id="navClose" aria-label="Close menu">&times;</button>
+        </div>
+        <nav class="nav-drawer-body">
+          <a href="${rel("index.html")}" class="drawer-link${isActive("index.html") ? " active" : ""}">Home</a>
+          <a href="${rel("about.html")}" class="drawer-link${isActive("about.html") ? " active" : ""}">About</a>
+          <div class="drawer-group">
+            <button type="button" class="drawer-group-toggle" id="drawerProductsToggle" aria-expanded="true">
+              <span>Products</span>
+              <span class="dropdown-arrow" aria-hidden="true">▾</span>
+            </button>
+            <div class="drawer-submenu open" id="drawerProductsMenu">
+              ${productLinksMobile}
+            </div>
+          </div>
+          <a href="${rel("blog/index.html")}" class="drawer-link${isActive("blog/index.html") ? " active" : ""}">Blog</a>
+          <a href="${rel("contact.html")}" class="drawer-link${isActive("contact.html") ? " active" : ""}">Contact</a>
+          <a href="${rel("contact.html")}" class="drawer-cta">Get a Quote</a>
+        </nav>
+      </aside>
     </nav>`;
 
   const footerHTML = `
@@ -107,6 +122,7 @@
               <li><a href="${rel("about.html")}">About Us</a></li>
               <li><a href="${rel("blog/index.html")}">Blog</a></li>
               <li><a href="${rel("contact.html")}">Contact</a></li>
+              <li><a href="${rel("privacy-policy.html")}">Privacy Policy</a></li>
             </ul>
           </div>
           <div class="footer-col">
@@ -140,20 +156,47 @@
   if (footerSlot) footerSlot.innerHTML = footerHTML;
 
   const navToggle = document.getElementById("navToggle");
-  const navLinks = document.getElementById("navLinks");
-  if (navToggle && navLinks) {
-    navToggle.addEventListener("click", () => {
-      navToggle.classList.toggle("active");
-      navLinks.classList.toggle("open");
-    });
-    navLinks.querySelectorAll("a").forEach(a => {
-      a.addEventListener("click", () => {
-        navToggle.classList.remove("active");
-        navLinks.classList.remove("open");
-        document.querySelectorAll(".nav-dropdown.open").forEach(d => d.classList.remove("open"));
-      });
-    });
+  const navClose = document.getElementById("navClose");
+  const navDrawer = document.getElementById("navDrawer");
+  const navBackdrop = document.getElementById("navBackdrop");
+
+  function openDrawer() {
+    navDrawer?.classList.add("open");
+    navBackdrop?.classList.add("open");
+    navToggle?.classList.add("active");
+    navToggle?.setAttribute("aria-expanded", "true");
+    navDrawer?.setAttribute("aria-hidden", "false");
+    navBackdrop?.setAttribute("aria-hidden", "false");
+    document.body.classList.add("nav-open");
   }
+
+  function closeDrawer() {
+    navDrawer?.classList.remove("open");
+    navBackdrop?.classList.remove("open");
+    navToggle?.classList.remove("active");
+    navToggle?.setAttribute("aria-expanded", "false");
+    navDrawer?.setAttribute("aria-hidden", "true");
+    navBackdrop?.setAttribute("aria-hidden", "true");
+    document.body.classList.remove("nav-open");
+  }
+
+  navToggle?.addEventListener("click", () => {
+    if (navDrawer?.classList.contains("open")) closeDrawer();
+    else openDrawer();
+  });
+  navClose?.addEventListener("click", closeDrawer);
+  navBackdrop?.addEventListener("click", closeDrawer);
+
+  navDrawer?.querySelectorAll("a").forEach(a => {
+    a.addEventListener("click", closeDrawer);
+  });
+
+  const drawerProductsToggle = document.getElementById("drawerProductsToggle");
+  const drawerProductsMenu = document.getElementById("drawerProductsMenu");
+  drawerProductsToggle?.addEventListener("click", () => {
+    const open = drawerProductsMenu?.classList.toggle("open");
+    drawerProductsToggle.setAttribute("aria-expanded", open ? "true" : "false");
+  });
 
   document.querySelectorAll(".nav-dropdown-toggle").forEach(toggle => {
     toggle.addEventListener("click", (e) => {
@@ -172,11 +215,17 @@
     });
   });
 
-  document.addEventListener("click", () => {
-    document.querySelectorAll(".nav-dropdown.open").forEach(d => {
-      d.classList.remove("open");
-      d.querySelector(".nav-dropdown-toggle")?.setAttribute("aria-expanded", "false");
-    });
+  document.addEventListener("click", (e) => {
+    if (!e.target.closest(".nav-dropdown")) {
+      document.querySelectorAll(".nav-dropdown.open").forEach(d => {
+        d.classList.remove("open");
+        d.querySelector(".nav-dropdown-toggle")?.setAttribute("aria-expanded", "false");
+      });
+    }
+  });
+
+  window.addEventListener("resize", () => {
+    if (window.innerWidth > 768) closeDrawer();
   });
 
   const siteNav = document.getElementById("siteNav");

@@ -1,0 +1,14 @@
+/* TEAM */
+Company: Hunger Fill Foodstuff Trading LLC
+Brand: Hungerfill Foods
+Site: https://hungerfill.com
+Location: Dubai, U.A.E
+Contact: info@hungerfill.com
+
+/* THANKS */
+Design and Development: XENORA
+
+/* SITE */
+Last update: 2026-06
+Standards: HTML5, CSS3, Schema.org
+Language: English

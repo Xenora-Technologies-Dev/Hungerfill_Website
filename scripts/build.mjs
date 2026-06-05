@@ -323,9 +323,10 @@ writeFileSync(join(root, "blog", "index.html"), wrapPage({
   base: "../"
 }));
 
-// ── Sitemap ──
+// ── Sitemap & crawl files ──
+const staticPages = ["", "about.html", "contact.html", "privacy-policy.html"];
 const pages = [
-  "", "about.html", "contact.html",
+  ...staticPages,
   "products/index.html",
   ...DATA.categories.map(c => `products/${c.id}.html`),
   ...DATA.products.map(p => `products/${p.slug}.html`),
@@ -333,11 +334,32 @@ const pages = [
   ...listedBlog.map(b => `blog/${b.slug}.html`)
 ];
 
+const today = new Date().toISOString().split("T")[0];
 const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${pages.map(p => `  <url><loc>${c.domain}/${p}</loc><changefreq>monthly</changefreq><priority>${p === "" ? "1.0" : p.includes("products/") && !p.includes("index") ? "0.8" : "0.7"}</priority></url>`).join("\n")}
+${pages.map(p => {
+  const priority = p === "" ? "1.0" : p === "privacy-policy.html" ? "0.3" : p.includes("products/") && !p.includes("index") ? "0.8" : "0.7";
+  return `  <url><loc>${c.domain}/${p}</loc><lastmod>${today}</lastmod><changefreq>monthly</changefreq><priority>${priority}</priority></url>`;
+}).join("\n")}
 </urlset>`;
 writeFileSync(join(root, "sitemap.xml"), sitemap);
-writeFileSync(join(root, "robots.txt"), `User-agent: *\nAllow: /\nSitemap: ${c.domain}/sitemap.xml\n`);
+
+writeFileSync(join(root, "robots.txt"), `User-agent: *
+Allow: /
+
+User-agent: GPTBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+Sitemap: ${c.domain}/sitemap.xml
+`);
 
 console.log(`Built ${DATA.products.length} product pages, ${listedBlog.length} listed blog articles, ${DATA.categories.length} category pages, sitemap & robots.txt`);
