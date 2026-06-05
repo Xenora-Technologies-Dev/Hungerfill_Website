@@ -1,0 +1,9 @@
+{
+  "name": "hungerfill-website",
+  "version": "1.0.0",
+  "description": "Hungerfill Foods — Dubai food trading company website",
+  "private": true,
+  "scripts": {
+    "build": "node scripts/build.mjs"
+  }
+}

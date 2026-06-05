@@ -1,3 +1,7 @@
-Place the company logo file in this folder as Hungerfill_Logo.png.
+Brand assets for Hungerfill Foods website.
 
-This logo is referenced by index.html and product.html.
+- logo.svg — Primary logo (used across the site)
+- Hungerfill_Logo.png — Optional PNG logo (add your company logo here to replace the SVG)
+
+The site references assets/logo.svg by default. To use a PNG instead, update
+the favicon and nav img src paths in the HTML templates and js/main.js.
